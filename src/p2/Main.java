@@ -26,13 +26,31 @@ public class Main {
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
-        Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
-        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        Reiziger sietske = new Reiziger(6, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
+        System.out.print("[Test] ReizigerDAO.save()\nEerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
-        // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
+        // Update reiziger
+        System.out.println("[Test] ReizigerDAO.update()\nData voor update: " + rdao.findById(6));
+        Reiziger sietskeUpdate = new Reiziger(6, "S", "", "Schaaps", java.sql.Date.valueOf(gbdatum));
+        rdao.update(sietskeUpdate);
+        System.out.println("Data na update: " + rdao.findById(6) + "\n");
+
+        // Verwijder een reiziger
+        System.out.print("[Test] ReizigerDAO.delete()\nEerst " + reizigers.size() + " reizigers, na ReizigerDAO.delete() ");
+        rdao.delete(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers\n");
+
+        // Zoek een reiziger op ID
+        System.out.println("[Test] ReizigerDAO.findById()\nVerwachte uitkomst: Reiziger{id=1, voorletters='G', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-09-17}");
+        System.out.println("Echte uitkomst: " + rdao.findById(1) + "\n");
+
+        // Zoek een reiziger op geboortedatum
+        System.out.println("[Test] ReizigerDAO.findByGbDatum()\nVerwachte uitkomst: Reiziger{id=2, voorletters='B', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-10-22}");
+        System.out.println("Echte uitkomst: " + rdao.findByGbDatum("2002-10-22") + "\n");
     }
 
     public static void main(String[] args) throws SQLException {

@@ -34,12 +34,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean update(Reiziger reiziger) {
         try {
             // Update de reiziger met de id uit het meegegeven object
-            PreparedStatement pst = conn.prepareStatement("UPDATE reiziger VALUES(voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ?) WHERE reiziger_id = ?");
-            pst.setString(1, reiziger.getVoorletters());
-            pst.setString(2, reiziger.getTussenvoegsel());
-            pst.setString(3, reiziger.getAchternaam());
-            pst.setDate(4, reiziger.getGeboortedatum());
-            pst.setInt(5, reiziger.getId());
+            PreparedStatement pst = conn.prepareStatement("UPDATE reiziger SET reiziger_id = ?, voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ? WHERE reiziger_id = ?");
+            pst.setInt(1, reiziger.getId());
+            pst.setString(2, reiziger.getVoorletters());
+            pst.setString(3, reiziger.getTussenvoegsel());
+            pst.setString(4, reiziger.getAchternaam());
+            pst.setDate(5, reiziger.getGeboortedatum());
+            pst.setInt(6, reiziger.getId());
             pst.executeUpdate();
             pst.close();
             return true;
@@ -53,7 +54,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean delete(Reiziger reiziger) {
         try {
             // Delete de reiziger met de id uit het meegegeven object
-            PreparedStatement pst = conn.prepareStatement("DELETE reiziger WHERE reiziger_id = ?");
+            PreparedStatement pst = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
             pst.setInt(1, reiziger.getId());
             pst.executeUpdate();
             pst.close();
@@ -68,7 +69,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public Reiziger findById(int id) {
         try {
             // Selecteer de reiziger met id 'id'
-            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger WHERE id = ?");
+            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id = ?");
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             Reiziger r = null;
