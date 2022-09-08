@@ -1,11 +1,11 @@
 package p2;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
-    String url = "jdbc:postgresql://localhost:5432/ovchip";
-    Connection conn = DriverManager.getConnection(url, "postgres", "Jopie06!");
+    Connection conn;
 
     public ReizigerDAOPsql(Connection conn) throws SQLException {
         this.conn = conn;
@@ -18,15 +18,11 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.setString(1, reiziger.getVoorletters());
             pst.setString(2, reiziger.getTussenvoegsel());
             pst.setString(3, reiziger.getAchternaam());
-            pst.setString(4, String.valueOf(reiziger.getGeboortedatum()));
-            ResultSet rs = pst.executeQuery();
-
-            rs.close();
+            pst.setDate(4, reiziger.getGeboortedatum());
+            pst.executeUpdate();
             pst.close();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -34,6 +30,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     @Override
     public boolean update(Reiziger reiziger) {
+        try {
+            PreparedStatement pst = conn.prepareStatement()
+        }
         return false;
     }
 
@@ -49,11 +48,42 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     @Override
     public List<Reiziger> findByGbDatum(String date) {
-        return null;
+        try {
+            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger WHERE geboortedatum = ?");
+            pst.setDate(1, Date.valueOf(date));
+            ResultSet rs = pst.executeQuery();
+            List gbReizigers = new ArrayList();
+
+            while (rs.next()) {
+                Reiziger r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+                gbReizigers.add(r);
+            }
+
+            rs.close();
+            pst.close();
+            return gbReizigers;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public List<Reiziger> findAll() {
-        return null;
+        try {
+            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger");
+            ResultSet rs = pst.executeQuery();
+            List alleReizigers = new ArrayList();
+
+            while (rs.next()) {
+                Reiziger r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+                alleReizigers.add(r);
+            }
+
+            rs.close();
+            pst.close();
+            return alleReizigers;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
