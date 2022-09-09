@@ -7,5 +7,5 @@ public interface AdresDAO {
     public boolean update(Adres adres);
     public boolean delete(Adres adres);
     public Adres findByReiziger(Reiziger reiziger);
-    public List<Reiziger> findAll();
+    public List<Adres> findAll();
 }

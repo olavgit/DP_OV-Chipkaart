@@ -56,10 +56,30 @@ public class Main {
         System.out.println("Echte uitkomst: " + rdao.findByGbDatum("2002-10-22") + "\n");
     }
 
+    private static void testAdresDAO(AdresDAO adao, ReizigerDAO rdao) throws SQLException {
+        System.out.println("\n---------- Test AdresDAO -------------");
+
+        // Haal alle adressen op uit de database
+        List<Adres> adressen = adao.findAll();
+        System.out.println("[Test] AdresDAO.findAll() geeft de volgende reizigers:");
+        for (Adres a : adressen) {
+            System.out.println(a);
+        }
+        System.out.println();
+
+        // Maak een nieuw adres aan en persisteer deze in de database
+        String gbdatum = "1981-03-14";
+        Reiziger sietske = new Reiziger(6, "S", "", "Boers", Date.valueOf(gbdatum));
+        Adres a = new Adres(6, "4212CX", "63", "Spijkse Kweldijk", "Spijk", sietske);
+
+    }
+
     public static void main(String[] args) throws SQLException {
         Connection conn = getConnection();
-        ReizigerDAO rdao = new ReizigerDAOPsql(conn);
+        ReizigerDAOPsql rdao = new ReizigerDAOPsql(conn);
+        AdresDAOPsql adao = new AdresDAOPsql(conn, rdao);
         testReizigerDAO(rdao);
+        testAdresDAO(adao, rdao);
         closeConnection();
     }
 }

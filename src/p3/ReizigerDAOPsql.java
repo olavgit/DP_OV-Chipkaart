@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
-    Connection conn;
+    private Connection conn;
 
     private AdresDAOPsql adao;
 

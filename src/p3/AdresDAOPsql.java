@@ -9,7 +9,6 @@ public class AdresDAOPsql implements AdresDAO {
 
     private ReizigerDAOPsql rdao;
 
-
     public AdresDAOPsql(Connection conn, ReizigerDAOPsql reizigerDAOPsql) throws SQLException {
         this.conn = conn;
         this.rdao = reizigerDAOPsql;
@@ -101,7 +100,7 @@ public class AdresDAOPsql implements AdresDAO {
     }
 
     @Override
-    public List<Reiziger> findAll() {
+    public List<Adres> findAll() {
         try {
             // Selecteer alle adressen
             PreparedStatement pst = conn.prepareStatement("SELECT * FROM adres");
