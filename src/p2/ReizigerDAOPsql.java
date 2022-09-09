@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
-    Connection conn;
+    private Connection conn;
 
     public ReizigerDAOPsql(Connection conn) throws SQLException {
         this.conn = conn;
@@ -25,6 +25,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.close();
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
