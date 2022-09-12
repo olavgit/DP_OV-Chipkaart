@@ -7,11 +7,8 @@ import java.util.List;
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection conn;
 
-    private AdresDAOPsql adao;
-
     public ReizigerDAOPsql(Connection conn) throws SQLException {
         this.conn = conn;
-        this.adao = new AdresDAOPsql(this.conn, this);
     }
 
     @Override
@@ -28,6 +25,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.close();
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
