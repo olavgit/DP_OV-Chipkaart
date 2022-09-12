@@ -1,4 +1,6 @@
-package p3;
+package p3.data;
+
+import p3.domain.Reiziger;
 
 import java.util.List;
 

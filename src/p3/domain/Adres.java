@@ -1,4 +1,4 @@
-package p3;
+package p3.domain;
 
 public class Adres {
     private int id;

@@ -1,5 +1,12 @@
 package p3;
 
+import p3.data.AdresDAO;
+import p3.data.AdresDAOPsql;
+import p3.data.ReizigerDAO;
+import p3.data.ReizigerDAOPsql;
+import p3.domain.Adres;
+import p3.domain.Reiziger;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;

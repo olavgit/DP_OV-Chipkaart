@@ -1,4 +1,7 @@
-package p3;
+package p3.data;
+
+import p3.domain.Adres;
+import p3.domain.Reiziger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -6,9 +9,11 @@ import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection conn;
+    private AdresDAO adao;
 
     public ReizigerDAOPsql(Connection conn) throws SQLException {
         this.conn = conn;
+        this.adao = new AdresDAOPsql(this.conn, this);
     }
 
     @Override
@@ -21,6 +26,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.setString(3, reiziger.getTussenvoegsel());
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, reiziger.getGeboortedatum());
+
+            Adres adres = reiziger.getAdres();
+            if (adres != null) {
+                adao.save(adres);
+            }
+
             pst.executeUpdate();
             pst.close();
             return true;
@@ -43,6 +54,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, reiziger.getGeboortedatum());
             pst.setInt(6, reiziger.getId());
+
+            Adres adres = reiziger.getAdres();
+            if (adres != null) {
+                adao.update(adres);
+            }
+
             pst.executeUpdate();
             pst.close();
             return true;
@@ -58,6 +75,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             // Delete de reiziger met de id uit het meegegeven object
             PreparedStatement pst = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
             pst.setInt(1, reiziger.getId());
+
+            Adres adres = reiziger.getAdres();
+            if (adres != null) {
+                adao.delete(adres);
+            }
+
             pst.executeUpdate();
             pst.close();
             return true;
