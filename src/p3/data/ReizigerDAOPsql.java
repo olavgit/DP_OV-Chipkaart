@@ -102,6 +102,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             // Maak een object voor de geselecteerde reiziger
             while (rs.next()) {
                 r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+
+                Adres a = adao.findByReiziger(r);
+                if (a != null) {
+                    r.setAdres(a);
+                }
+
             }
 
             rs.close();
@@ -125,6 +131,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             // Voor elke geselecteerde reiziger, maak een object en voeg deze toe aan een lijst
             while (rs.next()) {
                 Reiziger r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+
+                Adres a = adao.findByReiziger(r);
+                if (a != null) {
+                    r.setAdres(a);
+                }
+
                 gbReizigers.add(r);
             }
 
@@ -148,6 +160,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             // Voor elke geselecteerde reiziger, maak een object en voeg deze toe aan een lijst
             while (rs.next()) {
                 Reiziger r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+
+                Adres a = adao.findByReiziger(r);
+                if (a != null) {
+                    r.setAdres(a);
+                }
+
                 alleReizigers.add(r);
             }
 

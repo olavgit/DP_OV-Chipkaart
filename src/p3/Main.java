@@ -55,11 +55,11 @@ public class Main {
         System.out.println("Data na update: " + rdao.findById(6) + "\n");
 
         // Zoek een reiziger op ID
-        System.out.println("[Test] ReizigerDAO.findById()\nVerwachte uitkomst: Reiziger{id=1, voorletters='G', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-09-17}");
+        System.out.println("[Test] ReizigerDAO.findById()\nVerwachte uitkomst: Reiziger{id=1, voorletters='G', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-09-17, adresStraat=Visschersplein}");
         System.out.println("Echte uitkomst: " + rdao.findById(1) + "\n");
 
         // Zoek een reiziger op geboortedatum
-        System.out.println("[Test] ReizigerDAO.findByGbDatum()\nVerwachte uitkomst: Reiziger{id=2, voorletters='B', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-10-22}");
+        System.out.println("[Test] ReizigerDAO.findByGbDatum()\nVerwachte uitkomst: [Reiziger{id=2, voorletters='B', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-10-22, adresStraat=Jaarbeursplein}]");
         System.out.println("Echte uitkomst: " + rdao.findByGbDatum("2002-10-22") + "\n");
     }
 
@@ -88,7 +88,7 @@ public class Main {
         System.out.println(adressen.size() + " adressen\n");
 
         // Zoek een adres op reiziger
-        System.out.println("[Test] AdresDAO.findByReiziger()\nVerwachte uitkomst: Adres{id=1, postcode='3511LX', huisnummer='37', straat='Visschersplein', woonplaats='Utrecht', reiziger=Reiziger{id=1, voorletters='G', tussenvoegsel='van', achternaam='Rijn', geboortedatum=2002-09-17}}");
+        System.out.println("[Test] AdresDAO.findByReiziger()\nVerwachte uitkomst: Adres{id=1, postcode='3511LX', huisnummer='37', straat='Visschersplein', woonplaats='Utrecht', reizigerAchternaam=Rijn}");
         System.out.println("Echte uitkomst: " + adao.findByReiziger(rdao.findById(1)));
     }
 

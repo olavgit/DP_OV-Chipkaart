@@ -79,22 +79,27 @@ public class AdresDAOPsql implements AdresDAO {
     }
 
     @Override
-    public List<Adres> findByReiziger(Reiziger reiziger) {
+    public Adres findByReiziger(Reiziger reiziger) {
         // Selecteer het adres met de reiziger_id uit het meegegeven object
         try {
             PreparedStatement pst = conn.prepareStatement("SELECT * FROM adres WHERE reiziger_id = ?");
             pst.setInt(1, reiziger.getId());
             ResultSet rs = pst.executeQuery();
-            List rzAdressen = new ArrayList();
+            Adres adres = null;
 
             while (rs.next()) {
-                Adres a = new Adres(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rdao.findById(rs.getInt(6)));
-                rzAdressen.add(a);
+                adres = new Adres(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        reiziger);
             }
 
             rs.close();
             pst.close();
-            return rzAdressen;
+            return adres;
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {

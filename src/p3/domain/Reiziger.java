@@ -77,12 +77,17 @@ public class Reiziger {
 
     @Override
     public String toString() {
+        String toAdres = "";
+        if (adres != null) {
+            toAdres = ", adresStraat=" + adres.getStraat();
+        }
         return "Reiziger{" +
                 "id=" + id +
                 ", voorletters='" + voorletters + '\'' +
                 ", tussenvoegsel='" + tussenvoegsel + '\'' +
                 ", achternaam='" + achternaam + '\'' +
                 ", geboortedatum=" + geboortedatum +
+                toAdres +
                 '}';
     }
 }

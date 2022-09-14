@@ -9,6 +9,6 @@ public interface AdresDAO {
     public boolean save(Adres adres);
     public boolean update(Adres adres);
     public boolean delete(Adres adres);
-    public List<Adres> findByReiziger(Reiziger reiziger);
+    public Adres findByReiziger(Reiziger reiziger);
     public List<Adres> findAll();
 }
