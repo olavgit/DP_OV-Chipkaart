@@ -1,10 +1,8 @@
 package p4;
 
-import p4.data.AdresDAO;
-import p4.data.AdresDAOPsql;
-import p4.data.ReizigerDAO;
-import p4.data.ReizigerDAOPsql;
+import p4.data.*;
 import p4.domain.Adres;
+import p4.domain.OVChipkaart;
 import p4.domain.Reiziger;
 
 import java.sql.Connection;
@@ -92,12 +90,46 @@ public class Main {
         System.out.println("Echte uitkomst: " + adao.findByReiziger(rdao.findById(1)));
     }
 
+    private static void testOVChipkaartDAO(OVChipkaartDAO odao, ReizigerDAO rdao) throws SQLException {
+        System.out.println("\n---------- Test OVChipkaartDAO -------------");
+
+        // Haal alle ov chipkaarten op uit de database
+        List<OVChipkaart> ovchipkaarten = odao.findAll();
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende adressen:");
+        for (OVChipkaart o : ovchipkaarten) {
+            System.out.println(o);
+        }
+        System.out.println();
+
+        // Maak een nieuwe OVChipkaart en persisteer deze in de database
+        String verloopdatum = "2022-07-10";
+        OVChipkaart o1 = new OVChipkaart(8, Date.valueOf(verloopdatum), 2, 5, rdao.findById(6));
+        System.out.print("[Test] OVChipkaartDAO.save()\nEerst " + ovchipkaarten.size() + " ovchipkaarten, na OVChipkaartDAO.save() ");
+        odao.save(o1);
+        ovchipkaarten = odao.findAll();
+        System.out.println(ovchipkaarten.size() + " ovchipkaarten\n");
+
+        // Verwijder een OVChipkaart
+        System.out.print("[Test] OVChipkaartDAO.delete()\nEerst " + ovchipkaarten.size() + " ovchipkaarten, na OVChipkaartDAO.delete() ");
+        odao.delete(o1);
+        ovchipkaarten = odao.findAll();
+        System.out.println(ovchipkaarten.size() + " ovchipkaarten\n");
+
+        // Zoek een ovchipkaart op reiziger
+        System.out.println(odao.findByReiziger(rdao.findById(2)) + "\n");
+
+        // Zoek een ovchipkaart op id
+        System.out.println(odao.findById(35283));
+    }
+
     public static void main(String[] args) throws SQLException {
         Connection conn = getConnection();
         ReizigerDAO rdao = new ReizigerDAOPsql(conn);
         AdresDAO adao = new AdresDAOPsql(conn, rdao);
+        OVChipkaartDAO odao = new OVChipkaartDAOPsql(conn, rdao);
         testReizigerDAO(rdao);
         testAdresDAO(adao, rdao);
+        testOVChipkaartDAO(odao, rdao);
         closeConnection();
     }
 }

@@ -1,6 +1,7 @@
 package p4.domain;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Reiziger {
     private int id;
@@ -9,6 +10,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private Adres adres;
+    private List<OVChipkaart> ovChipkaartList;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
         this.id = id;
@@ -25,6 +27,16 @@ public class Reiziger {
         this.achternaam = achternaam;
         this.geboortedatum = geboortedatum;
         this.adres = adres;
+    }
+
+    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum, Adres adres, List<OVChipkaart> ovChipkaartList) {
+        this.id = id;
+        this.voorletters = voorletters;
+        this.tussenvoegsel = tussenvoegsel;
+        this.achternaam = achternaam;
+        this.geboortedatum = geboortedatum;
+        this.adres = adres;
+        this.ovChipkaartList = ovChipkaartList;
     }
 
     public int getId() {
@@ -75,12 +87,29 @@ public class Reiziger {
         this.adres = adres;
     }
 
+    public List<OVChipkaart> getOvChipkaartList() {
+        return ovChipkaartList;
+    }
+
+    public void setOvChipkaartList(List<OVChipkaart> ovChipkaartList) {
+        this.ovChipkaartList = ovChipkaartList;
+    }
+
     @Override
     public String toString() {
         String toAdres = "";
         if (adres != null) {
-            toAdres = ", adresStraat=" + adres.getStraat();
+            toAdres = ", adresStraat=" + adres.getStraat() + '\'';
         }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(", OVChipkaartnummer=");
+        for (OVChipkaart o : ovChipkaartList) {
+            sb.append(o.getKaart_nummer());
+            sb.append(", ");
+        }
+        String s = sb.toString();
+
         return "Reiziger{" +
                 "id=" + id +
                 ", voorletters='" + voorletters + '\'' +
@@ -88,6 +117,7 @@ public class Reiziger {
                 ", achternaam='" + achternaam + '\'' +
                 ", geboortedatum=" + geboortedatum +
                 toAdres +
+                s +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package p4.data;
 
 import p4.domain.Adres;
+import p4.domain.OVChipkaart;
 import p4.domain.Reiziger;
 
 import java.sql.*;
@@ -10,10 +11,12 @@ import java.util.List;
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection conn;
     private AdresDAO adao;
+    private OVChipkaartDAO odao;
 
     public ReizigerDAOPsql(Connection conn) throws SQLException {
         this.conn = conn;
         this.adao = new AdresDAOPsql(this.conn, this);
+        this.odao = new OVChipkaartDAOPsql(this.conn, this);
     }
 
     @Override
@@ -30,6 +33,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             Adres adres = reiziger.getAdres();
             if (adres != null) {
                 adao.save(adres);
+            }
+
+            List<OVChipkaart> ovChipkaartList = reiziger.getOvChipkaartList();
+            if (ovChipkaartList != null) {
+                for (OVChipkaart o : ovChipkaartList) {
+                    odao.save(o);
+                }
             }
 
             pst.executeUpdate();
@@ -60,6 +70,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 adao.update(adres);
             }
 
+            List<OVChipkaart> ovChipkaartList = reiziger.getOvChipkaartList();
+            if (ovChipkaartList != null) {
+                for (OVChipkaart o : ovChipkaartList) {
+                    odao.update(o);
+                }
+            }
+
             pst.executeUpdate();
             pst.close();
             return true;
@@ -79,6 +96,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             Adres adres = reiziger.getAdres();
             if (adres != null) {
                 adao.delete(adres);
+            }
+
+            List<OVChipkaart> ovChipkaartList = reiziger.getOvChipkaartList();
+            if (ovChipkaartList != null) {
+                for (OVChipkaart o : ovChipkaartList) {
+                    odao.delete(o);
+                }
             }
 
             pst.executeUpdate();
@@ -107,6 +131,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 if (a != null) {
                     r.setAdres(a);
                 }
+
+                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
+                r.setOvChipkaartList(ovChipkaartList);
 
             }
 
@@ -137,6 +164,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                     r.setAdres(a);
                 }
 
+                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
+                r.setOvChipkaartList(ovChipkaartList);
+
                 gbReizigers.add(r);
             }
 
@@ -165,6 +195,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 if (a != null) {
                     r.setAdres(a);
                 }
+
+                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
+                r.setOvChipkaartList(ovChipkaartList);
 
                 alleReizigers.add(r);
             }
