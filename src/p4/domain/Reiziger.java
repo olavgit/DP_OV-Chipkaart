@@ -95,6 +95,10 @@ public class Reiziger {
         this.ovChipkaartList = ovChipkaartList;
     }
 
+    // VOEG TOE OV CHIP EN VERWIJDER OV CHIP
+    //
+
+
     @Override
     public String toString() {
         String toAdres = "";
