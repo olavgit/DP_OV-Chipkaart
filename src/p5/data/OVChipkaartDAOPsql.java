@@ -25,44 +25,71 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     @Override
     public boolean save(OVChipkaart ovChipkaart) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO ov_chipkaart(geldig_tot, klasse, saldo, reiziger_id, kaart_nummer) VALUES(?, ?, ?, ?, ?)");
-            prepareovChipkaart(ovChipkaart, preparedStatement);
-            List<Product> productList = ovChipkaart.getProductList();
-            if (productList != null) {
-                for (Product p : productList) {
-                    PreparedStatement productStatement = conn.prepareStatement("INSERT INTO ov_chipkaart_product(kaart_nummer, product_nummer) VALUES(?, ?)");
-                    productStatement.setInt(1, ovChipkaart.getKaart_nummer());
-                    productStatement.setInt(2, p.getId());
-                    productStatement.executeUpdate();
-                    pdao.update(p);
+            PreparedStatement pst = conn.prepareStatement("INSERT INTO ov_chipkaart(geldig_tot, klasse, saldo, reiziger_id, kaart_nummer) VALUES(?, ?, ?, ?, ?)");
+            pst.setDate(1, ovChipkaart.getGeldig_tot());
+            pst.setInt(2, ovChipkaart.getKlasse());
+            pst.setDouble(3, ovChipkaart.getSaldo());
+            pst.setInt(4, ovChipkaart.getReiziger().getId());
+            pst.setInt(5, ovChipkaart.getKaart_nummer());
+            pst.executeUpdate();
+            pst.close();
+
+            List<Product> pl = ovChipkaart.getProductList();
+            if (pl != null) {
+                for (Product p : pl) {
+                    PreparedStatement is = conn.prepareStatement("INSERT INTO ov_chipkaart_product(kaart_nummer, product_nummer) VALUES(?, ?)");
+                    is.setInt(1, ovChipkaart.getKaart_nummer());
+                    is.setInt(2, p.getId());
+                    is.executeUpdate();
+                    is.close();
                 }
             }
             return true;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             e.printStackTrace();
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override
     public boolean update(OVChipkaart ovChipkaart) {
         try {
             PreparedStatement pst = conn.prepareStatement("UPDATE ov_chipkaart SET geldig_tot = ?, klasse = ?, saldo = ?, reiziger_id = ? WHERE kaart_nummer = ?");
-            List<Product> productList = ovChipkaart.getProductList();
-            if (productList != null) {
-                for (Product p : productList) {
-                    pdao.update(p);
+            pst.setDate(1, ovChipkaart.getGeldig_tot());
+            pst.setInt(2, ovChipkaart.getKlasse());
+            pst.setDouble(3, ovChipkaart.getSaldo());
+            pst.setInt(4, ovChipkaart.getReiziger().getId());
+            pst.setInt(5, ovChipkaart.getKaart_nummer());
+            pst.executeUpdate();
+            pst.close();
+            PreparedStatement dst = conn.prepareStatement("DELETE FROM ov_chipkaart_product WHERE kaart_nummer = ?");
+            dst.setInt(1, ovChipkaart.getKaart_nummer());
+            dst.executeUpdate();
+            dst.close();
+
+            List<Product> pl = ovChipkaart.getProductList();
+            if (pl != null) {
+                for (Product p : pl) {
+                    PreparedStatement is = conn.prepareStatement("INSERT INTO ov_chipkaart_product(kaart_nummer, product_nummer) VALUES(?, ?)");
+                    is.setInt(1, ovChipkaart.getKaart_nummer());
+                    is.setInt(2, p.getId());
+                    is.executeUpdate();
+                    is.close();
                 }
             }
-            return prepareovChipkaart(ovChipkaart, pst);
-        } catch (SQLException e) {
+            return true;
+        }
+        catch (SQLException e) {
             e.printStackTrace();
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -76,33 +103,16 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             dst.executeUpdate();
             dst.close();
 
-            List<Product> productList = pdao.findByOVChipkaart(ovChipkaart);
-            if (productList != null) {
-                for (Product p : productList) {
-                    p.removeChipkaart(ovChipkaart);
-                    pdao.update(p);
-                }
-            }
             pst.executeUpdate();
             pst.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
-    }
-
-    private boolean prepareovChipkaart(OVChipkaart ovChipkaart, PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement.setDate(1, ovChipkaart.getGeldig_tot());
-        preparedStatement.setInt(2, ovChipkaart.getKlasse());
-        preparedStatement.setDouble(3, ovChipkaart.getSaldo());
-        preparedStatement.setInt(4, ovChipkaart.getReiziger().getId());
-        preparedStatement.setInt(5, ovChipkaart.getKaart_nummer());
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
-        return true;
     }
 
     @Override
@@ -144,18 +154,13 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
             while (rs.next()) {
                 ovChipkaart = new OVChipkaart(
-                        rs.getInt(1),
-                        rs.getDate(2),
-                        rs.getInt(3),
-                        rs.getDouble(4),
-                        rdao.findById(rs.getInt(5)));
+                        rs.getInt("kaart_nummer"),
+                        rs.getDate("geldig_tot"),
+                        rs.getInt("klasse"),
+                        rs.getDouble("saldo"),
+                        rdao.findById(rs.getInt("reiziger_id")));
+                ovChipkaart.setProductList(pdao.findByOVChipkaart(ovChipkaart));
             }
-
-            List<Product> productList = pdao.findByOVChipkaart(ovChipkaart);
-            if (productList != null) {
-                ovChipkaart.setProductList(productList);
-            }
-
 
             rs.close();
             pst.close();
@@ -173,23 +178,17 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         try {
             PreparedStatement pst = conn.prepareStatement("SELECT * FROM ov_chipkaart");
             ResultSet rs = pst.executeQuery();
-            List<OVChipkaart> alleOVChipkaarten = new ArrayList();
+            List<OVChipkaart> alleOVChipkaarten = new ArrayList<>();
 
             while (rs.next()) {
                 OVChipkaart o = new OVChipkaart(
-                        rs.getInt(1),
-                        rs.getDate(2),
-                        rs.getInt(3),
-                        rs.getDouble(4),
-                        rdao.findById(rs.getInt(5)));
+                        rs.getInt("kaart_nummer"),
+                        rs.getDate("geldig_tot"),
+                        rs.getInt("klasse"),
+                        rs.getDouble("saldo"),
+                        rdao.findById(rs.getInt("reiziger_id")));
+                o.setProductList(pdao.findByOVChipkaart(o));
                 alleOVChipkaarten.add(o);
-            }
-
-            for (OVChipkaart ov : alleOVChipkaarten) {
-                List<Product> productList = pdao.findByOVChipkaart(ov);
-                if (productList != null) {
-                    ov.setProductList(productList);
-                }
             }
 
             rs.close();
@@ -206,22 +205,24 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     @Override
     public List<OVChipkaart> findByProduct(Product product) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT o.kaart_nummer, o.geldig_tot, o.klasse, o.saldo, o.reiziger_id FROM ov_chipkaart_product as ovc JOIN ov_chipkaart as o ON ovc.kaart_nummer = o.kaart_nummer WHERE product_nummer = ?");
-            preparedStatement.setInt(1, product.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<OVChipkaart> ovChipkaartList = new ArrayList<>();
-            while (resultSet.next()) {
-                OVChipkaart ovChipkaart = new OVChipkaart(
-                        resultSet.getInt("kaart_nummer"),
-                        resultSet.getDate("geldig_tot"),
-                        resultSet.getInt("klasse"),
-                        resultSet.getDouble("saldo"),
-                        rdao.findById(resultSet.getInt("reiziger_id")));
-                ovChipkaartList.add(ovChipkaart);
+            PreparedStatement pst = conn.prepareStatement("SELECT o.kaart_nummer, o.geldig_tot, o.klasse, o.saldo, o.reiziger_id FROM ov_chipkaart_product AS ovcp JOIN ov_chipkaart AS o ON ovcp.kaart_nummer = o.kaart_nummer WHERE product_nummer = ?");
+            pst.setInt(1, product.getId());
+            ResultSet rs = pst.executeQuery();
+            List<OVChipkaart> ovChipkaarten = new ArrayList<>();
+
+            while (rs.next()) {
+                OVChipkaart o = new OVChipkaart(
+                        rs.getInt("kaart_nummer"),
+                        rs.getDate("geldig_tot"),
+                        rs.getInt("klasse"),
+                        rs.getDouble("saldo"),
+                        rdao.findById(rs.getInt("reiziger_id")));
+                ovChipkaarten.add(o);
             }
-            preparedStatement.close();
-            resultSet.close();
-            return ovChipkaartList;
+
+            pst.close();
+            rs.close();
+            return ovChipkaarten;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -229,6 +230,5 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             e.printStackTrace();
             return null;
         }
-
     }
 }

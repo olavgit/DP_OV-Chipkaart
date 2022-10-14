@@ -92,19 +92,18 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             // Delete de reiziger met de id uit het meegegeven object
             PreparedStatement pst = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
             pst.setInt(1, reiziger.getId());
-
-            Adres adres = reiziger.getAdres();
-            if (adres != null) {
-                adao.delete(adres);
-            }
-
             List<OVChipkaart> ovChipkaartList = reiziger.getOvChipkaartList();
+
             if (ovChipkaartList != null) {
                 for (OVChipkaart o : ovChipkaartList) {
                     odao.delete(o);
                 }
             }
 
+            Adres a = reiziger.getAdres();
+            if (a != null) {
+                adao.delete(a);
+            }
             pst.executeUpdate();
             pst.close();
             return true;
@@ -118,28 +117,30 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public Reiziger findById(int id) {
         try {
             // Selecteer de reiziger met id 'id'
-            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id = ?");
+            PreparedStatement pst = conn.prepareStatement("SELECT * from reiziger WHERE reiziger_id = ?");
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             Reiziger r = null;
-
-            // Maak een object voor de geselecteerde reiziger
             while (rs.next()) {
-                r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+                r = new Reiziger(
+                        rs.getInt("reiziger_id"),
+                        rs.getString("voorletters"),
+                        rs.getString("tussenvoegsel"),
+                        rs.getString("achternaam"),
+                        rs.getDate("geboortedatum"));
+
+                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
+                r.setOvChipkaartList(ovChipkaartList);
 
                 Adres a = adao.findByReiziger(r);
                 if (a != null) {
                     r.setAdres(a);
                 }
-
-                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
-                r.setOvChipkaartList(ovChipkaartList);
-
             }
-
-            rs.close();
             pst.close();
+            rs.close();
             return r;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -150,28 +151,31 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public List<Reiziger> findByGbDatum(String date) {
         try {
             // Selecteer alle reizigers met geboortdatum 'date'
-            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger WHERE geboortedatum = ?");
-            pst.setDate(1, Date.valueOf(date));
+            PreparedStatement pst = conn.prepareStatement("SELECT * from reiziger WHERE geboortedatum = ?");
+            Date sqlDate = Date.valueOf(date);
+            pst.setDate(1, sqlDate);
             ResultSet rs = pst.executeQuery();
-            List gbReizigers = new ArrayList();
+            List<Reiziger> gbReizigers = new ArrayList<>();
 
-            // Voor elke geselecteerde reiziger, maak een object en voeg deze toe aan een lijst
             while (rs.next()) {
-                Reiziger r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+                Reiziger r = new Reiziger(
+                        rs.getInt("reiziger_id"),
+                        rs.getString("voorletters"),
+                        rs.getString("tussenvoegsel"),
+                        rs.getString("achternaam"),
+                        rs.getDate("geboortedatum"));
+                gbReizigers.add(r);
+
+                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
+                r.setOvChipkaartList(ovChipkaartList);
 
                 Adres a = adao.findByReiziger(r);
                 if (a != null) {
                     r.setAdres(a);
                 }
-
-                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
-                r.setOvChipkaartList(ovChipkaartList);
-
-                gbReizigers.add(r);
             }
-
-            rs.close();
             pst.close();
+            rs.close();
             return gbReizigers;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -183,27 +187,29 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public List<Reiziger> findAll() {
         try {
             // Selecteer alle reizigers
-            PreparedStatement pst = conn.prepareStatement("SELECT * FROM reiziger");
-            ResultSet rs = pst.executeQuery();
-            List alleReizigers = new ArrayList();
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * from reiziger");
+            List<Reiziger> alleReizigers = new ArrayList<>();
 
-            // Voor elke geselecteerde reiziger, maak een object en voeg deze toe aan een lijst
             while (rs.next()) {
-                Reiziger r = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+                Reiziger r = new Reiziger(
+                        rs.getInt("reiziger_id"),
+                        rs.getString("voorletters"),
+                        rs.getString("tussenvoegsel"),
+                        rs.getString("achternaam"),
+                        rs.getDate("geboortedatum"));
+                alleReizigers.add(r);
+
+                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
+                r.setOvChipkaartList(ovChipkaartList);
 
                 Adres a = adao.findByReiziger(r);
                 if (a != null) {
                     r.setAdres(a);
                 }
-
-                List<OVChipkaart> ovChipkaartList = odao.findByReiziger(r);
-                r.setOvChipkaartList(ovChipkaartList);
-
-                alleReizigers.add(r);
             }
-
+            st.close();
             rs.close();
-            pst.close();
             return alleReizigers;
         } catch (SQLException e) {
             e.printStackTrace();

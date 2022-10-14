@@ -98,27 +98,11 @@ public class Reiziger {
 
     @Override
     public String toString() {
-        String toAdres = "";
-        if (adres != null) {
-            toAdres = ", adresStraat=" + adres.getStraat() + '\'';
-        }
-
         StringBuilder sb = new StringBuilder();
-        sb.append(", OVChipkaartnummer=");
         for (OVChipkaart o : ovChipkaartList) {
-            sb.append(o.getKaart_nummer());
-            sb.append(", ");
+            sb.append(String.format("OVChipkaart {%s, Geldig tot: %s, Klasse: %s, €%s, }", o.getKaart_nummer(), o.getGeldig_tot(), o.getKlasse(), o.getSaldo()));
         }
-        String s = sb.toString();
-
-        return "Reiziger{" +
-                "id=" + id +
-                ", voorletters='" + voorletters + '\'' +
-                ", tussenvoegsel='" + tussenvoegsel + '\'' +
-                ", achternaam='" + achternaam + '\'' +
-                ", geboortedatum=" + geboortedatum +
-                toAdres +
-                s +
-                '}';
+        String ovChipkaarten = sb.toString();
+        return String.format("Reiziger {%s, %s. %s %s, geb. %s, %s, %s}", id, voorletters, tussenvoegsel, achternaam, geboortedatum, adres, ovChipkaarten);
     }
 }

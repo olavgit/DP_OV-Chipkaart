@@ -75,13 +75,6 @@ public class Adres {
 
     @Override
     public String toString() {
-        return "Adres{" +
-                "id=" + id +
-                ", postcode='" + postcode + '\'' +
-                ", huisnummer='" + huisnummer + '\'' +
-                ", straat='" + straat + '\'' +
-                ", woonplaats='" + woonplaats + '\'' +
-                ", reizigerAchternaam=" + reiziger.getAchternaam() +
-                '}';
+        return String.format("Adres {%s, %s %s}", id, postcode, huisnummer);
     }
 }

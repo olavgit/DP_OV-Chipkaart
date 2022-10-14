@@ -10,7 +10,7 @@ public class OVChipkaart {
     private int klasse;
     private double saldo;
     private Reiziger reiziger;
-    private List<Product> productList;
+    private List<Product> productList = new ArrayList<>();
 
     public OVChipkaart(int kaart_nummer, Date geldig_tot, int klasse, double saldo) {
         this.kaart_nummer = kaart_nummer;
@@ -34,25 +34,6 @@ public class OVChipkaart {
         this.saldo = saldo;
         this.reiziger = reiziger;
         this.productList = productList;
-    }
-
-    public List<Product> getProductList() {
-        return productList;
-    }
-
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
-    }
-
-    public void addProduct(Product product) {
-        if (productList == null || !productList.contains(product)) {
-            this.productList = new ArrayList<>();
-        }
-        this.productList.add(product);
-    }
-
-    public void removeProduct(Product product) {
-        this.productList.remove(product);
     }
 
     public int getKaart_nummer() {
@@ -95,17 +76,26 @@ public class OVChipkaart {
         this.reiziger = reiziger;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (productList != null) {
-            for (Product p : productList) {
-                stringBuilder.append(p);
-                stringBuilder.append(", ");
-            }
-        }
-        String producten = stringBuilder.toString();
-        return String.format("OVChipkaart {%s, Geldig tot: %s, Klasse: %s, €%s, %s}", kaart_nummer, geldig_tot, klasse, saldo, producten);
+    public List<Product> getProductList() {
+        return productList;
     }
 
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
+    }
+
+    public void addProduct(Product product) {
+        this.productList.add(product);
+        product.addChipkaart(this.kaart_nummer);
+    }
+
+    public void removeProduct(Product product) {
+        this.productList.remove(product);
+        product.removeChipkaart(this.kaart_nummer);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("OVChipkaart {%s, Geldig tot: %s, Klasse: %s, €%s, %s}", kaart_nummer, geldig_tot, klasse, saldo, productList);
+    }
 }

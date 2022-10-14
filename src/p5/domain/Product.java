@@ -8,7 +8,7 @@ public class Product {
     private String naam;
     private String beschrijving;
     private Double prijs;
-    private List<OVChipkaart> ovChipkaartList;
+    private List<Integer> ovChipkaartList = new ArrayList<>();
 
     public Product(int id, String naam, String beschrijving, Double prijs) {
         this.id = id;
@@ -17,7 +17,7 @@ public class Product {
         this.prijs = prijs;
     }
 
-    public Product(int id, String naam, String beschrijving, Double prijs, List<OVChipkaart> ovChipkaartList) {
+    public Product(int id, String naam, String beschrijving, Double prijs, List<Integer> ovChipkaartList) {
         this.id = id;
         this.naam = naam;
         this.beschrijving = beschrijving;
@@ -57,38 +57,24 @@ public class Product {
         this.prijs = prijs;
     }
 
-    public List<OVChipkaart> getOvChipkaartList() {
+    public List<Integer> getOvChipkaartList() {
         return ovChipkaartList;
     }
 
-    public void setOvChipkaartList(List<OVChipkaart> ovChipkaartList) {
+    public void setOvChipkaartList(List<Integer> ovChipkaartList) {
         this.ovChipkaartList = ovChipkaartList;
     }
 
-    public void addChipkaart(OVChipkaart ovChipkaart) {
-        if (ovChipkaartList == null) {
-            this.ovChipkaartList = new ArrayList<>();
-        }
+    public void addChipkaart(int ovChipkaart) {
         this.ovChipkaartList.add(ovChipkaart);
     }
 
-    public void removeChipkaart(OVChipkaart ovChipkaart) {
+    public void removeChipkaart(int ovChipkaart) {
         this.ovChipkaartList.remove(ovChipkaart);
     }
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (ovChipkaartList.size() > 1) {
-            for (OVChipkaart o : ovChipkaartList) {
-                stringBuilder.append(o);
-                stringBuilder.append(", ");
-            }
-        }
-        for (OVChipkaart o : ovChipkaartList) {
-            stringBuilder.append(o);
-        }
-        String ovChipkaarten = stringBuilder.toString();
-        return String.format("Product {%s, %s, %s, €%s, %s}", id, naam, beschrijving, prijs, ovChipkaarten);
+        return String.format("Product {%s, %s, %s, €%s, %s}", id, naam, beschrijving, prijs, ovChipkaartList);
     }
 }

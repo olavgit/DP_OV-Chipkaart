@@ -148,7 +148,7 @@ public class Main {
         // Maak een nieuw product aan en persisteer deze in de database
         Product newProduct = new Product(7, "Dagkaart 1e klas", "Een hele dag onbeperkt reizen met de trein.", 75.00);
         System.out.print("[Test] Eerst " + productList.size() + " producten, na ProductDAO.save() ");
-        newProduct.addChipkaart(odao.findById(57401));
+        newProduct.addChipkaart(odao.findById(57401).getKaart_nummer());
         pdao.save(newProduct);
         productList = pdao.findAll();
         System.out.println(productList.size() + " producten\n");
